@@ -284,23 +284,7 @@ body::after{
 .btn-share:hover{background:#d4637a;transform:translateY(-1px)}
 
 /* Feedback */
-.feedback-section{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:18px;padding:1.4rem 1.6rem;margin-top:.8rem;
-  box-shadow:0 2px 16px var(--shadow);
-}
-.feedback-section h4{font-family:var(--serif);font-size:1rem;margin-bottom:.4rem}
-.feedback-section p{font-size:.84rem;color:var(--slate);line-height:1.55;margin-bottom:1rem}
-.fb-btns{display:flex;flex-direction:column;gap:.6rem}
-.fb-btn{
-  padding:.75rem 1.2rem;border-radius:12px;border:2px solid var(--border);
-  background:var(--white);font-family:var(--sans);font-weight:600;font-size:.88rem;
-  color:var(--charcoal);cursor:pointer;text-align:left;transition:all .18s;
-  display:flex;align-items:center;gap:.7rem;
-}
-.fb-btn:hover{border-color:var(--rose);background:var(--rose-lt);color:var(--rose)}
-.fb-btn.selected{border-color:var(--sage);background:var(--sage-lt);color:var(--sage)}
-.fb-sent{font-size:.84rem;color:var(--sage);font-weight:600;margin-top:.7rem;display:none}
+
 
 /* Disclaimer */
 .disclaimer{
@@ -316,15 +300,100 @@ body::after{
   .options{flex-direction:column}
   .cm-grid{grid-template-columns:1fr 1fr}
 }
+
+/* ── Splash screen ─────────────────────────────────────────────────── */
+.splash{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:flex-start;overflow-y:auto;
+  background:linear-gradient(160deg,#2d1a24 0%,#5c2d3e 40%,#8b3a52 70%,#c4607a 100%);
+  padding:3rem 1.5rem 2.5rem;
+  transition:opacity .7s ease,transform .7s ease;
+}
+.splash.hide{opacity:0;pointer-events:none;transform:scale(1.04)}
+.splash-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;animation:orbdrift 8s ease-in-out infinite alternate}
+.splash-orb-1{width:400px;height:400px;background:rgba(232,115,138,.18);top:-80px;right:-80px;animation-delay:0s}
+.splash-orb-2{width:320px;height:320px;background:rgba(249,167,126,.12);bottom:-60px;left:-60px;animation-delay:-3s}
+@keyframes orbdrift{from{transform:translate(0,0) scale(1)}to{transform:translate(20px,30px) scale(1.1)}}
+.logo-wrap{display:flex;flex-direction:column;align-items:center;animation:splashreveal .9s cubic-bezier(.22,1,.36,1) both;animation-delay:.2s}
+.logo-svg{width:72px;height:72px;filter:drop-shadow(0 8px 32px rgba(232,115,138,.5));animation:logopulse 3s ease-in-out infinite}
+@keyframes logopulse{0%,100%{filter:drop-shadow(0 8px 32px rgba(232,115,138,.4))}50%{filter:drop-shadow(0 12px 48px rgba(232,115,138,.75))}}
+.splash-wordmark{font-family:'Lora',Georgia,serif;font-size:3.2rem;font-weight:300;letter-spacing:.18em;color:#fff;margin-top:.5rem;text-shadow:0 2px 24px rgba(0,0,0,.25);animation:splashreveal .9s cubic-bezier(.22,1,.36,1) both;animation-delay:.4s}
+.splash-wordmark span{color:#f5b8c4;font-style:italic;font-weight:400}
+.splash-tagline{font-family:'Nunito',sans-serif;font-size:1rem;font-weight:400;color:rgba(255,255,255,.7);letter-spacing:.06em;text-transform:uppercase;margin-top:.5rem;animation:splashreveal .9s cubic-bezier(.22,1,.36,1) both;animation-delay:.55s}
+.splash-brief{max-width:420px;text-align:center;font-family:'Lora',Georgia,serif;font-size:.95rem;line-height:1.7;color:rgba(255,255,255,.82);margin-top:1.6rem;animation:splashreveal .9s cubic-bezier(.22,1,.36,1) both;animation-delay:.7s}
+.splash-brief strong{color:#fde8ed;font-weight:600}
+.splash-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;margin-top:1.2rem;animation:splashreveal .9s cubic-bezier(.22,1,.36,1) both;animation-delay:.85s}
+.splash-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.35rem 1rem;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:.04em}
+.splash-cta{margin-top:1.8rem;padding:.9rem 2.8rem;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(135deg,#e8728a,#f9a77e);color:white;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 8px 32px rgba(232,115,138,.45);transition:transform .2s,box-shadow .2s;flex-shrink:0;animation:splashreveal .9s cubic-bezier(.22,1,.36,1) both;animation-delay:1s}
+.splash-cta:hover{background:#d4637a;transform:translateY(-3px);box-shadow:0 14px 40px rgba(232,115,138,.6)}
+.splash-disclaimer{margin-top:1.4rem;font-family:'Nunito',sans-serif;font-size:.7rem;color:rgba(255,255,255,.4);text-align:center;padding:0 1rem 1rem;line-height:1.6;animation:splashreveal .9s cubic-bezier(.22,1,.36,1) both;animation-delay:1.1s}
+@keyframes splashreveal{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<div class="shell">
+
+<!-- Splash Screen -->
+<div class="splash" id="splash">
+  <div class="splash-orb splash-orb-1"></div>
+  <div class="splash-orb splash-orb-2"></div>
+  <div class="logo-wrap">
+    <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(0   50 50)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(45  50 50)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(90  50 50)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(135 50 50)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(180 50 50)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(225 50 50)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(270 50 50)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(245,184,196,0.5)"  transform="rotate(315 50 50)"/>
+      <ellipse cx="50" cy="28" rx="5.5" ry="10" fill="rgba(232,115,138,.8)" transform="rotate(0   50 50)"/>
+      <ellipse cx="50" cy="28" rx="5.5" ry="10" fill="rgba(232,115,138,.8)" transform="rotate(60  50 50)"/>
+      <ellipse cx="50" cy="28" rx="5.5" ry="10" fill="rgba(232,115,138,.8)" transform="rotate(120 50 50)"/>
+      <ellipse cx="50" cy="28" rx="5.5" ry="10" fill="rgba(232,115,138,.8)" transform="rotate(180 50 50)"/>
+      <ellipse cx="50" cy="28" rx="5.5" ry="10" fill="rgba(232,115,138,.8)" transform="rotate(240 50 50)"/>
+      <ellipse cx="50" cy="28" rx="5.5" ry="10" fill="rgba(232,115,138,.8)" transform="rotate(300 50 50)"/>
+      <circle cx="50" cy="50" r="13" fill="white" opacity="0.95"/>
+      <circle cx="50" cy="50" r="8.5" fill="#e8728a"/>
+      <circle cx="50" cy="50" r="4"   fill="white" opacity="0.9"/>
+    </svg>
+    <div class="splash-wordmark">ob<span>y</span>rin</div>
+    <div class="splash-tagline">Know your body · Know your risk</div>
+  </div>
+  <p class="splash-brief">
+    Obyrin is a <strong>free, private machine learning driven PCOS risk screening tool</strong> — built for everyday women, not doctors.
+    Answer a few simple questions about your body and cycle, and we'll let you know if you may be at risk
+    and whether it's worth visiting a healthcare professional.
+  </p>
+  <div class="splash-pills">
+    <span class="splash-pill">🔒 100% Private</span>
+    <span class="splash-pill">⏱️ 3 Minutes</span>
+    <span class="splash-pill">🌸 Plain English</span>
+    <span class="splash-pill">🏥 Not a Diagnosis</span>
+  </div>
+  <button class="splash-cta" onclick="startApp()">Get Started →</button>
+  <p class="splash-disclaimer">For personal awareness only. Obyrin does not provide medical diagnoses.<br>Always consult a qualified healthcare professional for clinical assessment.</p>
+</div>
+
+<!-- Main App -->
+<div class="shell" id="main-shell" style="display:none">
 
   <!-- Header -->
   <header class="site-header">
-    <span class="header-icon">🌸</span>
-    <h1 class="site-title">PCOS Risk Check</h1>
+    <span class="header-icon">
+      <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(232,115,138,0.45)" transform="rotate(0   50 50)"/>
+        <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(232,115,138,0.45)" transform="rotate(60  50 50)"/>
+        <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(232,115,138,0.45)" transform="rotate(120 50 50)"/>
+        <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(232,115,138,0.45)" transform="rotate(180 50 50)"/>
+        <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(232,115,138,0.45)" transform="rotate(240 50 50)"/>
+        <ellipse cx="50" cy="22" rx="8" ry="14" fill="rgba(232,115,138,0.45)" transform="rotate(300 50 50)"/>
+        <circle cx="50" cy="50" r="13" fill="white"/>
+        <circle cx="50" cy="50" r="8"  fill="#e8728a"/>
+        <circle cx="50" cy="50" r="3.5" fill="white"/>
+      </svg>
+    </span>
+    <h1 class="site-title" style="font-family:'Lora',Georgia,serif;font-size:1.9rem;font-weight:400;letter-spacing:.15em">obyrin</h1>
     <p class="site-sub">A quick, friendly questionnaire to help you understand if you might be at risk of PCOS — in plain English, no medical degree needed.</p>
   </header>
 
@@ -343,7 +412,7 @@ body::after{
   <div id="main-area"></div>
 
   <p class="disclaimer">This tool is for personal awareness only and does <strong>not</strong> provide a medical diagnosis.<br>Always consult a qualified healthcare professional for clinical assessment.</p>
-</div>
+</div><!-- end main-shell -->
 
 <script>
 // ── Question definitions ────────────────────────────────────────────────────
@@ -454,7 +523,18 @@ let answers   = {}; // feature -> value
 let lastResult = null;
 
 // ── Boot ────────────────────────────────────────────────────────────────────
-renderQuestion(0);
+function startApp() {
+  const splash = document.getElementById('splash');
+  const shell  = document.getElementById('main-shell');
+  splash.classList.add('hide');
+  setTimeout(() => {
+    splash.style.display = 'none';
+    shell.style.display  = 'block';
+    renderQuestion(0);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }, 700);
+}
+// Waiting for Get Started click
 
 // ── Render question ─────────────────────────────────────────────────────────
 function renderQuestion(idx) {
@@ -849,23 +929,7 @@ function renderResult(data) {
         <button class="btn-share"   onclick="copyResult()">📋 Copy My Results</button>
       </div>
 
-      <!-- Hospital feedback -->
-      <div class="feedback-section">
-        <h4>🏥 Already been to the hospital?</h4>
-        <p>If you've already received an official result from a doctor, sharing it helps this tool become more accurate for everyone else. Only submit after a real clinical test.</p>
-        <div class="fb-btns" id="fb-btns">
-          <button class="fb-btn" onclick="sendFeedback(1, this)">
-            ✅ Hospital confirmed I have PCOS
-          </button>
-          <button class="fb-btn" onclick="sendFeedback(0, this)">
-            ✅ Hospital confirmed I do not have PCOS
-          </button>
-          <button class="fb-btn" onclick="dismissFeedback(this)">
-            📅 I haven't been yet — I'll report back later
-          </button>
-        </div>
-        <div class="fb-sent" id="fb-sent"></div>
-      </div>
+
 
     </div>`;
 
@@ -875,50 +939,14 @@ function renderResult(data) {
   }, 100);
 }
 
-// ── Feedback ─────────────────────────────────────────────────────────────────
-async function sendFeedback(hospitalFoundPCOS, btn) {
-  if (!lastResult) return;
-  const trueLabel = hospitalFoundPCOS;
-  const confirmed = (trueLabel === lastResult.prediction) ? 1 : 0;
 
-  document.getElementById('fb-btns').style.display = 'none';
-
-  try {
-    const res = await fetch('/api/feedback', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        features:   lastResult.features,
-        prediction: lastResult.prediction,
-        true_label: trueLabel,
-        confirmed:  confirmed,
-      }),
-    });
-    const data = await res.json();
-    const el = document.getElementById('fb-sent');
-    el.style.display = 'block';
-    el.textContent = data.will_retrain
-      ? '✅ Thank you! Your result has been recorded and will help retrain the model.'
-      : `✅ Thank you! Result recorded. (${data.pending_count}/${data.retrain_at} results collected towards next model update)`;
-  } catch(e) {
-    document.getElementById('fb-sent').style.display = 'block';
-    document.getElementById('fb-sent').textContent = '❌ Could not save — please try again.';
-  }
-}
-
-function dismissFeedback(btn) {
-  document.getElementById('fb-btns').style.display = 'none';
-  const el = document.getElementById('fb-sent');
-  el.style.display = 'block';
-  el.textContent = "No problem — come back any time after your hospital visit to report your result.";
-}
 
 // ── Copy result summary ───────────────────────────────────────────────────────
 function copyResult() {
   if (!lastResult) return;
   const riskPct = Math.round(lastResult.probability[1] * 100);
   const label   = lastResult.prediction === 1 ? 'Elevated Risk' : 'Lower Risk';
-  const text = `PCOS Risk Check Result\n${'─'.repeat(30)}\nRisk Level: ${label}\nRisk Score: ${riskPct}%\n\nThis is not a medical diagnosis. Generated by PCOS Risk Check — for personal awareness only. Please consult a healthcare professional.`;
+  const text = `Obyrin — PCOS Risk Screening Result\n${'─'.repeat(38)}\nRisk Level: ${label}\nRisk Score: ${riskPct}%\n\nThis is not a medical diagnosis. Generated by Obyrin — for personal awareness only. Please consult a qualified healthcare professional.`;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.querySelector('.btn-share');
     btn.textContent = '✅ Copied!';

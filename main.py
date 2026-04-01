@@ -121,3 +121,6 @@ def predict(req: PredictRequest):
         "model_version":    STATE["version"],
         "missing_features": missing,
     }
+
+if os.path.isdir("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")

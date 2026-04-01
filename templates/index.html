@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Am I at risk of PCOS?</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --cream:    #fdf8f3;
+  --rose:     #e8728a;
+  --rose-lt:  #fde8ed;
+  --rose-md:  #f5b8c4;
+  --peach:    #f9a77e;
+  --peach-lt: #feeee4;
+  --sage:     #7bab8b;
+  --sage-lt:  #e8f5ec;
+  --mauve:    #9b6ea0;
+  --mauve-lt: #f3eaf5;
+  --charcoal: #3d3340;
+  --slate:    #7a6e7e;
+  --border:   #ede5e0;
+  --white:    #ffffff;
+  --shadow:   rgba(61,51,64,0.10);
+  --serif:    'Lora', Georgia, serif;
+  --sans:     'Nunito', sans-serif;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Decorative blobs ── */
+body::before{
+  content:'';
+  position:fixed;top:-120px;right:-120px;
+  width:420px;height:420px;
+  background:radial-gradient(circle, #fde8ed 0%, transparent 70%);
+  border-radius:50%;
+  z-index:0;pointer-events:none;
+}
+body::after{
+  content:'';
+  position:fixed;bottom:-100px;left:-100px;
+  width:360px;height:360px;
+  background:radial-gradient(circle, #e8f5ec 0%, transparent 70%);
+  border-radius:50%;
+  z-index:0;pointer-events:none;
+}
+
+/* ── Shell ── */
+.shell{
+  position:relative;z-index:1;
+  width:100%;max-width:640px;
+  padding:2rem 1.5rem 4rem;
+}
+
+/* ── Header ── */
+.site-header{text-align:center;padding:2.5rem 0 2rem}
+.header-icon{font-size:2.8rem;margin-bottom:.6rem;display:block}
+.site-title{font-family:var(--serif);font-size:1.9rem;color:var(--charcoal);margin-bottom:.4rem}
+.site-sub{color:var(--slate);font-size:.92rem;line-height:1.6;max-width:420px;margin:0 auto}
+
+/* ── Progress bar ── */
+.progress-wrap{margin-bottom:2rem}
+.progress-meta{display:flex;justify-content:space-between;font-size:.78rem;color:var(--slate);margin-bottom:.5rem;font-weight:600}
+.progress-track{background:var(--border);border-radius:999px;height:7px;overflow:hidden}
+.progress-fill{
+  height:100%;border-radius:999px;
+  background:linear-gradient(90deg,var(--rose),var(--peach));
+  transition:width .5s cubic-bezier(.22,1,.36,1);
+}
+
+/* ── Question card ── */
+.q-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:2rem 2rem 1.8rem;
+  box-shadow:0 4px 32px var(--shadow);
+  animation:slideup .35s cubic-bezier(.22,1,.36,1);
+}
+@keyframes slideup{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:none}
+}
+
+.q-category{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  padding:.3rem .85rem;border-radius:999px;margin-bottom:1.1rem;
+}
+.cat-body    {background:var(--peach-lt);color:var(--peach)}
+.cat-cycle   {background:var(--rose-lt); color:var(--rose)}
+.cat-symptoms{background:var(--mauve-lt);color:var(--mauve)}
+.cat-lifestyle{background:var(--sage-lt);color:var(--sage)}
+.cat-vitals  {background:#eef3ff;color:#5b7fcf}
+
+.q-text{
+  font-family:var(--serif);
+  font-size:1.25rem;
+  line-height:1.55;
+  color:var(--charcoal);
+  margin-bottom:.7rem;
+}
+.q-hint{
+  font-size:.84rem;color:var(--slate);
+  background:var(--cream);
+  border-left:3px solid var(--border);
+  border-radius:0 8px 8px 0;
+  padding:.6rem .9rem;
+  margin-bottom:1.4rem;
+  line-height:1.55;
+}
+.q-hint strong{color:var(--charcoal)}
+
+/* ── Answer options (Yes/No) ── */
+.options{display:flex;gap:.8rem;flex-wrap:wrap}
+.opt{
+  flex:1;min-width:120px;
+  padding:.9rem 1rem;
+  border:2px solid var(--border);
+  border-radius:14px;
+  background:var(--white);
+  color:var(--charcoal);
+  font-family:var(--sans);
+  font-size:.95rem;
+  font-weight:600;
+  cursor:pointer;
+  text-align:center;
+  transition:all .18s;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+.opt:hover{border-color:var(--rose);background:var(--rose-lt);color:var(--rose)}
+.opt.selected{border-color:var(--rose);background:var(--rose-lt);color:var(--rose)}
+
+/* ── Number input ── */
+.num-wrap{
+  display:flex;align-items:center;gap:1rem;
+  background:var(--cream);
+  border:2px solid var(--border);
+  border-radius:14px;
+  padding:.7rem 1rem;
+  transition:border-color .2s;
+}
+.num-wrap:focus-within{border-color:var(--rose)}
+.num-input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:var(--sans);font-size:1.5rem;font-weight:700;
+  color:var(--charcoal);text-align:center;
+}
+.num-unit{font-size:.85rem;color:var(--slate);font-weight:600;white-space:nowrap}
+.num-btns{display:flex;flex-direction:column;gap:.3rem}
+.num-btn{
+  width:28px;height:28px;border-radius:8px;border:1px solid var(--border);
+  background:var(--white);color:var(--charcoal);font-size:1rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.num-btn:hover{background:var(--rose-lt);border-color:var(--rose);color:var(--rose)}
+
+/* ── Scale input ── */
+.scale-wrap{margin:.5rem 0}
+.scale-track{
+  display:flex;gap:.5rem;justify-content:space-between;
+}
+.scale-opt{
+  flex:1;padding:.65rem .3rem;
+  border:2px solid var(--border);border-radius:12px;
+  background:var(--white);text-align:center;cursor:pointer;
+  font-weight:700;font-size:.95rem;transition:all .18s;
+}
+.scale-opt:hover{border-color:var(--rose);background:var(--rose-lt);color:var(--rose)}
+.scale-opt.selected{border-color:var(--rose);background:var(--rose-lt);color:var(--rose)}
+.scale-labels{display:flex;justify-content:space-between;font-size:.72rem;color:var(--slate);margin-top:.4rem;padding:0 .2rem}
+
+/* ── Nav buttons ── */
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem}
+.btn-back{
+  background:transparent;border:none;color:var(--slate);
+  font-family:var(--sans);font-size:.88rem;font-weight:600;
+  cursor:pointer;padding:.5rem .8rem;border-radius:10px;
+  transition:all .15s;
+  display:flex;align-items:center;gap:.3rem;
+}
+.btn-back:hover{background:var(--border);color:var(--charcoal)}
+.btn-next{
+  background:var(--rose);color:white;border:none;
+  font-family:var(--sans);font-size:.95rem;font-weight:700;
+  padding:.75rem 2rem;border-radius:14px;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:.5rem;
+  box-shadow:0 4px 16px rgba(232,115,138,.3);
+}
+.btn-next:hover{background:#d4637a;transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,115,138,.4)}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ── Loader ── */
+.loader{display:inline-block;width:20px;height:20px;border:2.5px solid rgba(255,255,255,.35);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Result screen ── */
+.result-screen{animation:slideup .4s cubic-bezier(.22,1,.36,1)}
+
+.result-hero{
+  text-align:center;
+  padding:2.5rem 2rem 2rem;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:24px;
+  box-shadow:0 4px 32px var(--shadow);
+  margin-bottom:1.2rem;
+}
+.result-emoji{font-size:4rem;display:block;margin-bottom:.8rem}
+.result-label{
+  font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  padding:.3rem 1rem;border-radius:999px;display:inline-block;margin-bottom:.8rem;
+}
+.label-high{background:var(--rose-lt);color:var(--rose)}
+.label-low {background:var(--sage-lt); color:var(--sage)}
+.result-title{font-family:var(--serif);font-size:1.8rem;margin-bottom:.5rem}
+.result-sub{color:var(--slate);font-size:.9rem;line-height:1.6;max-width:380px;margin:0 auto}
+
+/* Risk meter */
+.risk-meter{margin:1.5rem 0 .5rem}
+.risk-meter-label{display:flex;justify-content:space-between;font-size:.78rem;font-weight:700;color:var(--slate);margin-bottom:.5rem}
+.risk-track{background:var(--border);border-radius:999px;height:14px;overflow:hidden;position:relative}
+.risk-fill{
+  height:100%;border-radius:999px;
+  transition:width 1s cubic-bezier(.22,1,.36,1) .3s;
+}
+.risk-fill.high{background:linear-gradient(90deg,#f9a77e,var(--rose))}
+.risk-fill.low {background:linear-gradient(90deg,#7bab8b,#5a9b72)}
+.risk-pct{font-family:var(--serif);font-size:2rem;font-weight:600;text-align:center;margin-top:.6rem}
+
+/* Result cards */
+.result-cards{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.2rem}
+.r-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:18px;padding:1.4rem 1.6rem;
+  box-shadow:0 2px 16px var(--shadow);
+}
+.r-card-title{font-weight:700;font-size:.9rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.r-card p{color:var(--slate);font-size:.88rem;line-height:1.65}
+.r-card ul{color:var(--slate);font-size:.88rem;line-height:1.65;padding-left:1.2rem}
+.r-card li{margin-bottom:.25rem}
+
+/* Hospital CTA */
+.hospital-cta{
+  background:linear-gradient(135deg,var(--rose-lt),var(--peach-lt));
+  border:1px solid var(--rose-md);
+  border-radius:18px;padding:1.5rem 1.6rem;
+  margin-bottom:1.2rem;
+}
+.hospital-cta h3{font-family:var(--serif);font-size:1.1rem;margin-bottom:.5rem;color:var(--charcoal)}
+.hospital-cta p{font-size:.87rem;color:var(--slate);line-height:1.65;margin-bottom:1rem}
+.cta-tests{display:flex;flex-wrap:wrap;gap:.5rem}
+.cta-test{background:white;border:1px solid var(--rose-md);border-radius:999px;padding:.3rem .85rem;font-size:.78rem;font-weight:600;color:var(--rose)}
+
+/* Share / restart */
+.result-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+.btn-restart{
+  flex:1;padding:.8rem 1.2rem;border-radius:14px;
+  border:2px solid var(--border);background:var(--white);
+  font-family:var(--sans);font-weight:700;font-size:.9rem;color:var(--charcoal);
+  cursor:pointer;transition:all .15s;text-align:center;
+}
+.btn-restart:hover{border-color:var(--rose);color:var(--rose)}
+.btn-share{
+  flex:2;padding:.8rem 1.2rem;border-radius:14px;border:none;
+  background:var(--rose);color:white;
+  font-family:var(--sans);font-weight:700;font-size:.9rem;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(232,115,138,.3);
+}
+.btn-share:hover{background:#d4637a;transform:translateY(-1px)}
+
+/* Feedback */
+.feedback-section{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:18px;padding:1.4rem 1.6rem;margin-top:.8rem;
+  box-shadow:0 2px 16px var(--shadow);
+}
+.feedback-section h4{font-family:var(--serif);font-size:1rem;margin-bottom:.4rem}
+.feedback-section p{font-size:.84rem;color:var(--slate);line-height:1.55;margin-bottom:1rem}
+.fb-btns{display:flex;flex-direction:column;gap:.6rem}
+.fb-btn{
+  padding:.75rem 1.2rem;border-radius:12px;border:2px solid var(--border);
+  background:var(--white);font-family:var(--sans);font-weight:600;font-size:.88rem;
+  color:var(--charcoal);cursor:pointer;text-align:left;transition:all .18s;
+  display:flex;align-items:center;gap:.7rem;
+}
+.fb-btn:hover{border-color:var(--rose);background:var(--rose-lt);color:var(--rose)}
+.fb-btn.selected{border-color:var(--sage);background:var(--sage-lt);color:var(--sage)}
+.fb-sent{font-size:.84rem;color:var(--sage);font-weight:600;margin-top:.7rem;display:none}
+
+/* Disclaimer */
+.disclaimer{
+  text-align:center;font-size:.75rem;color:var(--slate);
+  line-height:1.6;margin-top:1.5rem;padding:0 1rem;
+}
+
+/* Responsive */
+@media(max-width:500px){
+  .shell{padding:1.2rem 1rem 3rem}
+  .q-text{font-size:1.1rem}
+  .result-title{font-size:1.5rem}
+  .options{flex-direction:column}
+  .cm-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <header class="site-header">
+    <span class="header-icon">🌸</span>
+    <h1 class="site-title">PCOS Risk Check</h1>
+    <p class="site-sub">A quick, friendly questionnaire to help you understand if you might be at risk of PCOS — in plain English, no medical degree needed.</p>
+  </header>
+
+  <!-- Progress -->
+  <div class="progress-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-meta">
+      <span id="progress-label">Question 1 of 12</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div id="main-area"></div>
+
+  <p class="disclaimer">This tool is for personal awareness only and does <strong>not</strong> provide a medical diagnosis.<br>Always consult a qualified healthcare professional for clinical assessment.</p>
+</div>
+
+<script>
+// ── Question definitions ────────────────────────────────────────────────────
+// Each maps to the feature names the model expects.
+// type: "yesno" | "number" | "scale" | "choice"
+const QUESTIONS = [
+  {
+    id:"age", feature:"Age (yrs)", type:"number", min:10, max:60, step:1, unit:"years old",
+    category:"body", catLabel:"About You",
+    question:"How old are you?",
+    hint:"Your age helps us understand your stage of life. PCOS can appear at any age after puberty but is most common in your 20s and 30s.",
+    default:25,
+  },
+  {
+    id:"weight", feature:"Weight (Kg)", type:"weight_lbs",
+    category:"body", catLabel:"About You",
+    question:"What is your current weight?",
+    hint:"Weight can influence hormone levels. It helps us calculate your BMI, which is one of the indicators we look at. Just enter your weight in pounds — we'll handle the rest.",
+    default:143,
+  },
+  {
+    id:"height", feature:"Height(Cm) ", type:"height_ft",
+    category:"body", catLabel:"About You",
+    question:"How tall are you?",
+    hint:"Enter your height in feet and inches. For example, if you are five feet four inches tall, enter 5 feet and 4 inches. We'll convert it automatically.",
+    defaultFt:5, defaultIn:4,
+  },
+  {
+    id:"cycle", feature:"Cycle(R/I)", type:"choice",
+    options:[
+      {label:"⏱️ Regular", hint:"Comes roughly every 21–35 days, fairly predictable", value:2},
+      {label:"🔀 Irregular", hint:"Unpredictable, skips months, or very frequent", value:4},
+    ],
+    category:"cycle", catLabel:"Your Cycle",
+    question:"How would you describe your menstrual cycle?",
+    hint:"A regular cycle comes roughly every 21–35 days. Irregular means it's unpredictable, skips months, or comes very frequently. Irregular periods are one of the key signs of PCOS.",
+  },
+  {
+    id:"cycle_len", feature:"Cycle length(days)", type:"number", min:15, max:120, step:1, unit:"days",
+    category:"cycle", catLabel:"Your Cycle",
+    question:"How many days pass between the start of one period and the start of the next?",
+    hint:"Count from day 1 of your period to day 1 of your next period. The average is 28 days, but 21–35 days is considered normal. If it varies a lot, use your best average.",
+    default:28,
+  },
+  {
+    id:"weight_gain", feature:"Weight gain(Y/N)", type:"yesno",
+    yesVal:1, noVal:0,
+    category:"symptoms", catLabel:"Symptoms",
+    question:"Have you been gaining weight lately, especially around your belly, even though your eating habits haven't changed much?",
+    hint:"Unexplained weight gain — particularly around the mid-section — can be linked to insulin resistance, which is common in PCOS. This is different from gaining weight after eating more or exercising less.",
+  },
+  {
+    id:"hair_growth", feature:"hair growth(Y/N)", type:"yesno",
+    yesVal:1, noVal:0,
+    category:"symptoms", catLabel:"Symptoms",
+    question:"Have you noticed unusual hair growth on your face, chest, back, or stomach?",
+    hint:"This is called hirsutism. It's caused by higher-than-normal levels of male hormones (androgens). Think dark or coarse hairs on the chin, upper lip, around the nipples, or lower abdomen.",
+  },
+  {
+    id:"skin", feature:"Skin darkening (Y/N)", type:"yesno",
+    yesVal:1, noVal:0,
+    category:"symptoms", catLabel:"Symptoms",
+    question:"Have you noticed dark, velvety patches of skin — especially on the back of your neck, armpits, or groin?",
+    hint:"This is called acanthosis nigricans. It looks like a dark, slightly raised, soft patch of skin. It's a common sign of insulin resistance, which is closely linked to PCOS.",
+  },
+  {
+    id:"hair_loss", feature:"Hair loss(Y/N)", type:"yesno",
+    yesVal:1, noVal:0,
+    category:"symptoms", catLabel:"Symptoms",
+    question:"Have you been experiencing hair thinning or loss on your scalp — especially at the top or front?",
+    hint:"PCOS-related hair loss is called androgenic alopecia. It's different from normal shedding — you may notice more hair on your pillow, in the shower drain, or your hair parting getting wider.",
+  },
+  {
+    id:"pimples", feature:"Pimples(Y/N)", type:"yesno",
+    yesVal:1, noVal:0,
+    category:"symptoms", catLabel:"Symptoms",
+    question:"Do you get persistent or severe acne, particularly on your jaw, chin, or lower cheeks?",
+    hint:"Hormonal acne linked to PCOS tends to appear on the lower face — jaw, chin, and sides of the cheeks. It often flares around your period and doesn't respond well to typical skincare.",
+  },
+  {
+    id:"fastfood", feature:"Fast food (Y/N)", type:"yesno",
+    yesVal:1, noVal:0,
+    category:"lifestyle", catLabel:"Lifestyle",
+    question:"Do you eat fast food or highly processed meals several times a week?",
+    hint:"Diets high in processed foods can worsen insulin resistance, which is a major driver of PCOS symptoms. This includes things like takeaways, ready meals, sugary drinks, and packaged snacks.",
+  },
+  {
+    id:"exercise", feature:"Reg.Exercise(Y/N)", type:"yesno",
+    yesVal:1, noVal:0,
+    category:"lifestyle", catLabel:"Lifestyle",
+    question:"Do you exercise regularly — at least 30 minutes, 3 or more times a week?",
+    hint:"Regular exercise helps regulate insulin and hormone levels, which can reduce PCOS risk and symptoms. This includes walking, gym, dancing, cycling, swimming — anything that gets your heart rate up.",
+  },
+];
+
+// Category styles
+const CAT_STYLE = {
+  body:     "cat-body",
+  cycle:    "cat-cycle",
+  symptoms: "cat-symptoms",
+  lifestyle:"cat-lifestyle",
+  vitals:   "cat-vitals",
+};
+
+// ── State ───────────────────────────────────────────────────────────────────
+let current   = 0;
+let answers   = {}; // feature -> value
+let lastResult = null;
+
+// ── Boot ────────────────────────────────────────────────────────────────────
+renderQuestion(0);
+
+// ── Render question ─────────────────────────────────────────────────────────
+function renderQuestion(idx) {
+  const q   = QUESTIONS[idx];
+  const total = QUESTIONS.length;
+
+  // Progress
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('progress-label').textContent = `Question ${idx+1} of ${total}`;
+  const pct = Math.round((idx / total) * 100);
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  let inputHTML = '';
+
+  if (q.type === 'yesno') {
+    const curVal = answers[q.feature];
+    inputHTML = `
+      <div class="options">
+        <button class="opt ${curVal === q.yesVal ? 'selected' : ''}"
+          onclick="selectYesNo('${q.feature}', ${q.yesVal}, this)">
+          👍 Yes
+        </button>
+        <button class="opt ${curVal === q.noVal ? 'selected' : ''}"
+          onclick="selectYesNo('${q.feature}', ${q.noVal}, this)">
+          👎 No
+        </button>
+      </div>`;
+
+  } else if (q.type === 'number') {
+    const val = answers[q.feature] ?? q.default;
+    inputHTML = `
+      <div class="num-wrap">
+        <div class="num-btns">
+          <button class="num-btn" onclick="nudge('num_${q.id}', ${q.step}, ${q.min}, ${q.max})">▲</button>
+          <button class="num-btn" onclick="nudge('num_${q.id}', -${q.step}, ${q.min}, ${q.max})">▼</button>
+        </div>
+        <input class="num-input" id="num_${q.id}" type="number"
+          min="${q.min}" max="${q.max}" step="${q.step}" value="${val}"
+          oninput="answers['${q.feature}'] = parseFloat(this.value)||0" />
+        <span class="num-unit">${q.unit}</span>
+      </div>`;
+
+  } else if (q.type === 'weight_lbs') {
+    const val = answers['_weight_lbs'] ?? q.default;
+    inputHTML = `
+      <div class="num-wrap">
+        <div class="num-btns">
+          <button class="num-btn" onclick="nudge('num_weight_lbs', 1, 50, 500)">▲</button>
+          <button class="num-btn" onclick="nudge('num_weight_lbs', -1, 50, 500)">▼</button>
+        </div>
+        <input class="num-input" id="num_weight_lbs" type="number"
+          min="50" max="500" step="1" value="${val}"
+          oninput="setWeightLbs(parseFloat(this.value)||0)" />
+        <span class="num-unit">lbs</span>
+      </div>`;
+
+  } else if (q.type === 'height_ft') {
+    const ft = answers['_height_ft'] ?? q.defaultFt ?? 5;
+    const inch = answers['_height_in'] ?? q.defaultIn ?? 4;
+    inputHTML = `
+      <div style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap">
+        <div class="num-wrap" style="flex:1;min-width:120px">
+          <div class="num-btns">
+            <button class="num-btn" onclick="nudge('num_height_ft', 1, 3, 8)">▲</button>
+            <button class="num-btn" onclick="nudge('num_height_ft', -1, 3, 8)">▼</button>
+          </div>
+          <input class="num-input" id="num_height_ft" type="number"
+            min="3" max="8" step="1" value="${ft}"
+            oninput="setHeightFt()" />
+          <span class="num-unit">ft</span>
+        </div>
+        <div class="num-wrap" style="flex:1;min-width:120px">
+          <div class="num-btns">
+            <button class="num-btn" onclick="nudge('num_height_in', 1, 0, 11)">▲</button>
+            <button class="num-btn" onclick="nudge('num_height_in', -1, 0, 11)">▼</button>
+          </div>
+          <input class="num-input" id="num_height_in" type="number"
+            min="0" max="11" step="1" value="${inch}"
+            oninput="setHeightFt()" />
+          <span class="num-unit">in</span>
+        </div>
+      </div>
+      <p style="font-size:.78rem;color:var(--slate);margin-top:.6rem;text-align:center" id="height-preview"></p>`;
+
+  } else if (q.type === 'choice') {
+    const curVal = answers[q.feature];
+    inputHTML = `<div class="options">` +
+      q.options.map(o => `
+        <button class="opt ${curVal === o.value ? 'selected' : ''}"
+          onclick="selectChoice('${q.feature}', ${o.value}, this)"
+          title="${o.hint}">
+          ${o.label}
+        </button>`).join('') +
+      `</div>`;
+
+  } else if (q.type === 'scale') {
+    const curVal = answers[q.feature];
+    inputHTML = `
+      <div class="scale-wrap">
+        <div class="scale-track">
+          ${[1,2,3,4,5].map(n => `
+            <button class="scale-opt ${curVal===n?'selected':''}"
+              onclick="selectScale('${q.feature}', ${n}, this)">${n}</button>`
+          ).join('')}
+        </div>
+        <div class="scale-labels"><span>${q.scaleMin}</span><span>${q.scaleMax}</span></div>
+      </div>`;
+  }
+
+  const isLast = idx === total - 1;
+  const hasAnswer = answers[q.feature] !== undefined || q.type === 'number';
+
+  document.getElementById('main-area').innerHTML = `
+    <div class="q-card">
+      <span class="q-category ${CAT_STYLE[q.category]}">${q.catLabel}</span>
+      <p class="q-text">${q.question}</p>
+      <div class="q-hint">💡 <strong>What does this mean?</strong> ${q.hint}</div>
+      ${inputHTML}
+      <div class="q-nav">
+        <button class="btn-back" onclick="goBack()" ${idx===0?'style="visibility:hidden"':''}>
+          ← Back
+        </button>
+        <button class="btn-next" id="btn-next" onclick="goNext()">
+          ${isLast ? 'See My Results →' : 'Next →'}
+        </button>
+      </div>
+    </div>`;
+
+  // Pre-set number field listener
+  if (q.type === 'number') {
+    const el = document.getElementById(`num_${q.id}`);
+    if (el) {
+      answers[q.feature] = parseFloat(el.value) || q.default;
+      el.addEventListener('input', () => {
+        answers[q.feature] = parseFloat(el.value) || 0;
+      });
+    }
+  }
+
+  // Initialise weight (lbs) field
+  if (q.type === 'weight_lbs') {
+    const lbs = answers['_weight_lbs'] ?? q.default;
+    setWeightLbs(lbs);
+  }
+
+  // Initialise height (ft/in) fields
+  if (q.type === 'height_ft') {
+    setHeightFt();
+  }
+}
+
+// ── Input handlers ───────────────────────────────────────────────────────────
+function selectYesNo(feature, val, btn) {
+  answers[feature] = val;
+  btn.closest('.options').querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectChoice(feature, val, btn) {
+  answers[feature] = val;
+  btn.closest('.options').querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectScale(feature, val, btn) {
+  answers[feature] = val;
+  btn.closest('.scale-track').querySelectorAll('.scale-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function nudge(inputId, delta, min, max) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  let val = parseFloat(el.value) + delta;
+  val = Math.min(max, Math.max(min, Math.round(val * 10) / 10));
+  el.value = val;
+  el.dispatchEvent(new Event('input'));
+}
+
+// Weight: store raw lbs for display, convert to kg for model
+function setWeightLbs(lbs) {
+  if (!lbs || isNaN(lbs)) return;
+  answers['_weight_lbs']   = lbs;
+  answers['Weight (Kg)']   = parseFloat((lbs / 2.2046).toFixed(1));
+  const el = document.getElementById('num_weight_lbs');
+  if (el) el.value = lbs;
+}
+
+// Height: store raw ft+in for display, convert to cm for model
+function setHeightFt() {
+  const ftEl   = document.getElementById('num_height_ft');
+  const inEl   = document.getElementById('num_height_in');
+  if (!ftEl || !inEl) return;
+  const ft     = parseInt(ftEl.value) || 5;
+  const inches = parseInt(inEl.value) || 0;
+  answers['_height_ft']    = ft;
+  answers['_height_in']    = inches;
+  answers['Height(Cm) ']   = parseFloat(((ft * 30.48) + (inches * 2.54)).toFixed(1));
+  const preview = document.getElementById('height-preview');
+  if (preview) preview.textContent = `= ${answers['Height(Cm) ']} cm`;
+}
+
+// ── Navigation ───────────────────────────────────────────────────────────────
+function goNext() {
+  const q = QUESTIONS[current];
+  // Validate answer exists
+  const skipValidation = ['number','weight_lbs','height_ft'];
+  if (!skipValidation.includes(q.type) && answers[q.feature] === undefined) {
+    const card = document.querySelector('.q-card');
+    card.style.border = '2px solid var(--rose)';
+    setTimeout(() => card.style.border = '1px solid var(--border)', 1200);
+    return;
+  }
+  if (current < QUESTIONS.length - 1) {
+    current++;
+    renderQuestion(current);
+    window.scrollTo({top:0, behavior:'smooth'});
+  } else {
+    submitAnswers();
+  }
+}
+
+function goBack() {
+  if (current > 0) {
+    current--;
+    renderQuestion(current);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+// ── Submit & compute BMI, waist/hip defaults ─────────────────────────────────
+async function submitAnswers() {
+  // Compute BMI from converted height (cm) + weight (kg)
+  const h = answers["Height(Cm) "] || 162.56;   // default 5'4"
+  const w = answers["Weight (Kg)"] || 64.9;     // default 143 lbs
+  answers["BMI"] = parseFloat((w / ((h/100)**2)).toFixed(1));
+
+  // Fill defaults for features not asked (model still needs them)
+  const DEFAULTS = {
+    "Blood Group":           11,
+    "Pulse rate(bpm) ":      78,
+    "RR (breaths/min)":      18,
+    "Marraige Status (Yrs)": 3,
+    "Pregnant(Y/N)":         0,
+    "No. of abortions":      0,
+    "Hip(inch)":             38,
+    "Waist(inch)":           32,
+    "Waist:Hip Ratio":       0.84,
+    "BP _Systolic (mmHg)":   120,
+    "BP _Diastolic (mmHg)":  80,
+  };
+  Object.entries(DEFAULTS).forEach(([k,v]) => { if (answers[k] === undefined) answers[k] = v; });
+
+  // Show loading
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100%';
+  document.getElementById('progress-label').textContent = 'Calculating…';
+  document.getElementById('main-area').innerHTML = `
+    <div class="q-card" style="text-align:center;padding:3rem 2rem">
+      <div style="font-size:2.5rem;margin-bottom:1rem">🌸</div>
+      <p style="font-family:var(--serif);font-size:1.2rem;margin-bottom:.5rem">Analysing your answers…</p>
+      <p style="color:var(--slate);font-size:.88rem">Just a moment</p>
+      <div style="margin-top:1.5rem;display:flex;justify-content:center">
+        <div class="loader" style="width:28px;height:28px;border-color:rgba(232,115,138,.3);border-top-color:var(--rose)"></div>
+      </div>
+    </div>`;
+
+  try {
+    console.log("📤 Sending features:", answers);
+    const res  = await fetch('/api/predict', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({features: answers}),
+    });
+    const data = await res.json();
+    console.log("📥 Response:", data);
+    if (!res.ok) {
+      throw new Error(data.detail || JSON.stringify(data));
+    }
+    if (data.missing_features && data.missing_features.length > 0) {
+      console.warn("⚠️ Missing features (filled with 0):", data.missing_features);
+    }
+    lastResult = {features: answers, ...data};
+    renderResult(data);
+  } catch(e) {
+    console.error("❌ Predict error:", e);
+    document.getElementById('main-area').innerHTML = `
+      <div class="q-card" style="text-align:center;padding:2rem">
+        <p style="font-family:var(--serif);font-size:1.1rem;color:var(--rose)">⚠️ Something went wrong</p>
+        <p style="color:var(--slate);font-size:.85rem;margin-top:.5rem;word-break:break-word">${e.message}</p>
+        <p style="color:var(--slate);font-size:.8rem;margin-top:.5rem">Open your browser's console (F12) for details.</p>
+        <button class="btn-next" style="margin:1.2rem auto 0;display:block" onclick="submitAnswers()">Try Again</button>
+      </div>`;
+  }
+}
+
+// ── Render result ────────────────────────────────────────────────────────────
+function renderResult(data) {
+  const { prediction, probability, model, model_version } = data;
+  const riskPct  = Math.round(probability[1] * 100);
+  const isHigh   = prediction === 1;
+
+  const symptoms = [];
+  if (answers["hair growth(Y/N)"]       === 1) symptoms.push("Unusual hair growth");
+  if (answers["Hair loss(Y/N)"]         === 1) symptoms.push("Hair thinning / loss");
+  if (answers["Skin darkening (Y/N)"]   === 1) symptoms.push("Dark skin patches");
+  if (answers["Pimples(Y/N)"]           === 1) symptoms.push("Persistent acne");
+  if (answers["Weight gain(Y/N)"]       === 1) symptoms.push("Unexplained weight gain");
+  if (answers["Cycle(R/I)"]             === 4) symptoms.push("Irregular periods");
+  if (answers["Fast food (Y/N)"]        === 1) symptoms.push("High processed food intake");
+  if (answers["Reg.Exercise(Y/N)"]      === 0) symptoms.push("Low physical activity");
+
+  const bmi = answers["BMI"] || 0;
+  const bmiNote = bmi < 18.5 ? "Your BMI is in the underweight range."
+    : bmi < 25 ? "Your BMI is in the healthy range."
+    : bmi < 30 ? "Your BMI is in the overweight range, which can worsen PCOS symptoms."
+    : "Your BMI is in the obese range — weight management can significantly help reduce PCOS symptoms.";
+
+  document.getElementById('progress-label').textContent = 'Your results';
+
+  document.getElementById('main-area').innerHTML = `
+    <div class="result-screen">
+
+      <!-- Hero -->
+      <div class="result-hero">
+        <span class="result-emoji">${isHigh ? '⚠️' : '🟢'}</span>
+        <div class="result-label ${isHigh ? 'label-high' : 'label-low'}">${isHigh ? 'Elevated Risk' : 'Lower Risk'}</div>
+        <h2 class="result-title">${isHigh
+          ? 'You may be at elevated risk of PCOS'
+          : 'Your risk of PCOS appears lower'}</h2>
+        <p class="result-sub">${isHigh
+          ? 'Your answers suggest some indicators associated with PCOS. We recommend speaking to a doctor for a proper check-up.'
+          : 'Your answers don\'t show strong PCOS indicators right now. Keep monitoring your health and speak to a doctor if anything changes.'}</p>
+
+        <!-- Risk meter -->
+        <div class="risk-meter">
+          <div class="risk-meter-label">
+            <span>Lower risk</span><span>Higher risk</span>
+          </div>
+          <div class="risk-track">
+            <div class="risk-fill ${isHigh?'high':'low'}" id="risk-fill" style="width:0%"></div>
+          </div>
+          <div class="risk-pct" style="color:${isHigh?'var(--rose)':'var(--sage)'}">
+            ${riskPct}% risk score
+          </div>
+        </div>
+      </div>
+
+      <!-- Symptoms noticed -->
+      ${symptoms.length > 0 ? `
+      <div class="r-card">
+        <div class="r-card-title">🔍 Indicators from your answers</div>
+        <ul>${symptoms.map(s=>`<li>${s}</li>`).join('')}</ul>
+        <p style="margin-top:.6rem;font-size:.82rem;color:var(--slate)">These are potential PCOS-related indicators, not a confirmed diagnosis. A doctor will assess these properly.</p>
+      </div>` : `
+      <div class="r-card">
+        <div class="r-card-title">✅ No strong indicators flagged</div>
+        <p>Your answers didn't highlight typical PCOS symptoms. Continue to monitor your health and see a doctor if your cycle changes or new symptoms appear.</p>
+      </div>`}
+
+      <!-- BMI card -->
+      <div class="r-card">
+        <div class="r-card-title">⚖️ Your BMI: ${bmi}</div>
+        <p style="font-size:.8rem;color:var(--slate);margin-bottom:.4rem">
+          ${answers['_weight_lbs'] ? answers['_weight_lbs']+' lbs' : ''} 
+          ${answers['_height_ft'] !== undefined ? '· '+answers['_height_ft']+"'"+(answers['_height_in']||0)+'"' : ''}
+        </p>
+        <p>${bmiNote}</p>
+      </div>
+
+      <!-- Hospital CTA -->
+      ${isHigh ? `
+      <div class="hospital-cta">
+        <h3>🏥 Your next step: visit a doctor or gynaecologist</h3>
+        <p>This tool can only estimate risk — it cannot diagnose PCOS. A healthcare professional can confirm or rule it out with simple tests. Please don't delay if you're concerned.</p>
+        <div class="cta-tests">
+          <span class="cta-test">🔬 Blood hormone panel</span>
+          <span class="cta-test">🩻 Pelvic ultrasound</span>
+          <span class="cta-test">🩸 Insulin / glucose test</span>
+          <span class="cta-test">👩‍⚕️ Clinical examination</span>
+        </div>
+      </div>` : `
+      <div class="hospital-cta" style="background:linear-gradient(135deg,var(--sage-lt),#f0faf3);border-color:rgba(123,171,139,.4)">
+        <h3 style="color:var(--sage)">💚 Keep taking care of yourself</h3>
+        <p>Even with a lower risk score, it's still worth speaking to a doctor if you have symptoms like irregular periods, unexpected hair changes, or persistent acne. PCOS can present differently in different people.</p>
+      </div>`}
+
+      <!-- Actions -->
+      <div class="result-actions">
+        <button class="btn-restart" onclick="restartQuiz()">↩ Start Over</button>
+        <button class="btn-share"   onclick="copyResult()">📋 Copy My Results</button>
+      </div>
+
+      <!-- Hospital feedback -->
+      <div class="feedback-section">
+        <h4>🏥 Already been to the hospital?</h4>
+        <p>If you've already received an official result from a doctor, sharing it helps this tool become more accurate for everyone else. Only submit after a real clinical test.</p>
+        <div class="fb-btns" id="fb-btns">
+          <button class="fb-btn" onclick="sendFeedback(1, this)">
+            ✅ Hospital confirmed I have PCOS
+          </button>
+          <button class="fb-btn" onclick="sendFeedback(0, this)">
+            ✅ Hospital confirmed I do not have PCOS
+          </button>
+          <button class="fb-btn" onclick="dismissFeedback(this)">
+            📅 I haven't been yet — I'll report back later
+          </button>
+        </div>
+        <div class="fb-sent" id="fb-sent"></div>
+      </div>
+
+    </div>`;
+
+  // Animate risk bar
+  setTimeout(() => {
+    document.getElementById('risk-fill').style.width = riskPct + '%';
+  }, 100);
+}
+
+// ── Feedback ─────────────────────────────────────────────────────────────────
+async function sendFeedback(hospitalFoundPCOS, btn) {
+  if (!lastResult) return;
+  const trueLabel = hospitalFoundPCOS;
+  const confirmed = (trueLabel === lastResult.prediction) ? 1 : 0;
+
+  document.getElementById('fb-btns').style.display = 'none';
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        features:   lastResult.features,
+        prediction: lastResult.prediction,
+        true_label: trueLabel,
+        confirmed:  confirmed,
+      }),
+    });
+    const data = await res.json();
+    const el = document.getElementById('fb-sent');
+    el.style.display = 'block';
+    el.textContent = data.will_retrain
+      ? '✅ Thank you! Your result has been recorded and will help retrain the model.'
+      : `✅ Thank you! Result recorded. (${data.pending_count}/${data.retrain_at} results collected towards next model update)`;
+  } catch(e) {
+    document.getElementById('fb-sent').style.display = 'block';
+    document.getElementById('fb-sent').textContent = '❌ Could not save — please try again.';
+  }
+}
+
+function dismissFeedback(btn) {
+  document.getElementById('fb-btns').style.display = 'none';
+  const el = document.getElementById('fb-sent');
+  el.style.display = 'block';
+  el.textContent = "No problem — come back any time after your hospital visit to report your result.";
+}
+
+// ── Copy result summary ───────────────────────────────────────────────────────
+function copyResult() {
+  if (!lastResult) return;
+  const riskPct = Math.round(lastResult.probability[1] * 100);
+  const label   = lastResult.prediction === 1 ? 'Elevated Risk' : 'Lower Risk';
+  const text = `PCOS Risk Check Result\n${'─'.repeat(30)}\nRisk Level: ${label}\nRisk Score: ${riskPct}%\n\nThis is not a medical diagnosis. Generated by PCOS Risk Check — for personal awareness only. Please consult a healthcare professional.`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-share');
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy My Results', 2000);
+  });
+}
+
+// ── Restart ───────────────────────────────────────────────────────────────────
+function restartQuiz() {
+  current   = 0;
+  answers   = {};
+  lastResult = null;
+  document.getElementById('progress-fill').style.width = '0%';
+  renderQuestion(0);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>

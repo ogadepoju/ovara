@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+env/
+
+# Database (resets on free tier anyway, don't commit it)
+feedback.db
+
+# DO NOT ignore trained_model.pkl — it must be committed for Render to work
+# trained_model.pkl   ← keep this line commented out
+
+# Local kaggle credentials
+kaggle.json
